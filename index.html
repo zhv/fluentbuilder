@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>FluentBuilder</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link href='https://fonts.googleapis.com/css?family=Condiment' rel='stylesheet' type='text/css' />
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/railscasts.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	<style>
+		body {
+			padding-top: 20px;
+			padding-bottom: 20px;
+			position: relative;
+		}
+		.navbar {
+			margin-bottom: 30px;
+		}
+		.row {
+			margin-bottom: 20px;
+		}
+	</style>
+	<script>
+		$(document).ready(function() {
+			$('.code').each(function(i, block) {
+				hljs.highlightBlock(block);
+			});
+		});
+	</script>
+</head>
+<body id="top">
+	<div class="container">
+		<div class="row clearfix">
+			<div class="col-md-1 column"></div>
+			<div class="col-md-10 column">
+				<nav class="navbar navbar-default navbar-inverse" role="navigation">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#" style="line-height: 28px; font-family: 'Condiment', cursive;">FluentBuilder</a>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav">
+							<li><a href="#about">About</a></li>
+							<li><a href="#examples">Examples</a></li>
+							<li><a href="#rules">Implementation rules</a></li>
+							<li><a href="#limitations">Known issues and limitations</a></li>
+						</ul>
+					</div>
+				</nav>
+				<div class="jumbotron" style="position: relative;">
+					<center><h1 style="font-family: 'Condiment', cursive;">FluentBuilder</h1></center>
+					<p>
+						FluentBuilder is a small Java library which implements
+						 <a href="https://en.wikipedia.org/wiki/Builder_pattern">builder</a>
+						design pattern. It uses developer configured interfaces and
+						reflection methods to analyze model (target) and provides
+						convenient API.
+					</p>
+					<a href="https://github.com/zhv/fluentbuilder"><img
+						style="position: absolute; top: 0; right: 0; border: 0;"
+						src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67"
+						alt="Fork me on GitHub"
+						data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" />
+					</a>
+				</div>
+				<div class="page-header">
+					<a name="about"></a>
+					<h1>About</h1>
+				</div>
+				<div class="row clearfix">
+					<div class="col-md-4 column">
+						<h3>
+							<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+							<span>Dead simple</span>
+						</h3>
+						<p>
+							FluentBuilder designed as simple as possible. It requires
+							implementation of your model-specific interface only. Target
+							class (or model) may be represented as simple POJO. No
+							XML/JSON/etc configuration files required.
+						</p>
+					</div>
+					<div class="col-md-4 column">
+						<h3>
+							<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+							<span>Ready for extension</span>
+						</h3>
+						<p>
+							You have ability to use your own services. However you may
+							completely redefine builder process.
+						</p>
+						<p>
+							Extension points:
+							<ul>
+								<li><code>BuilderIntrospector</code></li>
+								<li><code>PropertySetter</code></li>
+								<li><code>TargetInstantiator</code></li>
+							</ul>
+						</p>
+					</div>
+					<div class="col-md-4 column">
+						<h3>
+							<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+							<span>Compact size</span>
+						</h3>
+						<p>
+							FluentBuilder is really small:
+							<ul>
+								<li>Only one JAR artifact (24 K size)</li>
+								<li>Only one dependency (SLF4J)</li>
+							</ul>
+						</p>
+					</div>
+				</div>
+				<div class="page-header">
+					<a name="examples"></a>
+					<h1>Examples</h1>
+				</div>
+				<div class="row clearfix">
+					<p class="well-sm bg-success">
+						<span class="badge">1</span>&nbsp;
+						<b>If you have some model class</b>
+					</p>
+					<div class="col-md-9 column">
+<pre class="code lang-java">
+public class Product
+{
+    private String name;
+    private Integer price;
+    private Integer quantity;
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public Integer getPrice() { return price; }
+    public void setPrice(Integer price) { this.price = price; }
+
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+}
+</pre>
+					</div>
+					<div class="col-md-3 column">
+						<ol>
+							<li>Create or use existing class.</li>
+							<li>Add get/set methods to turn your class into the POJO bean.</li>
+						</ol>
+					</div>
+				</div>
+				<div class="row clearfix">
+					<p class="well-sm bg-success">
+						<span class="badge">2</span>&nbsp;
+						<b>Create builder interface</b>
+					</p>
+					<div class="col-md-8 column">
+<pre class="code lang-java">
+@TargetClass(Product.class)
+public interface ProductBuilder&lt;R&gt;
+		extends NestedBuilder&lt;Product, R&gt;
+{
+    public ProductBuilder&lt;R&gt; setName(String name);
+    public ProductBuilder&lt;R&gt; setPrice(Integer price);
+    public ProductBuilder&lt;R&gt; setQuantity(Integer quantity);
+}
+</pre>
+					</div>
+					<div class="col-md-4 column">
+						<ol>
+							<li>Create simple interface.</li>
+							<li>Add <code>@TargetClass</code> annotation to connect builder with its target type.</li>
+							<li>Extend it from the <code>NestedBuilder</code>. This marks your interface as
+								builder and also allows to use it as nested builder.</li>
+							<li>Copy setter methods from model class to the builder interface.
+								Every setter method should have the same signature as used in
+								the target type, but it should return current builder interface type.</li>
+						</ol>
+						<hr />
+						<p>Note: Builder interface should be generic-enabled to avoid
+						unnecessary cast and use pre-compile time checking.</p>
+					</div>
+				</div>
+				<div class="row clearfix">
+					<p class="well-sm bg-success">
+						<span class="badge">3</span>&nbsp;
+						<b>Get builder using BuilderFactoryFacade</b>
+					</p>
+					<div class="col-md-9 column">
+<pre class="code lang-java">
+BuilderFactoryFacade factoryFacade = new DefaultBuilderFactoryFacade();
+ProductBuilder builder = factoryFacade.createRootBuilder(ProductBuilder.class);
+Product product = builder
+	        .setName("Potato")
+	        .setPrice(10)
+	        .setQuantity(20)
+	        .build();
+</pre>
+					</div>
+					<div class="col-md-3 column">
+						<ol>
+							<li>Create instance of <code>DefaultBuilderFactoryFacade</code>.</li>
+							<li>Create instance of <code>ProductBuilder</code>.</li>
+							<li>Build the target instance using fluent interface.</li>
+						</ol>
+					</div>
+				</div>
+				<div class="page-header">
+					<a name="rules"></a>
+					<h1>Implementation rules</h1>
+				</div>
+				<div class="row clearfix">
+					<p>There is a set of rules for implementating builder interface:</p>
+					<ul>
+						<li>It should extend the <code>RootBuilder</code> interface.
+							Inheritance is supported, you may use sub-interface like <code>NestedBuilder</code>.
+						</li>
+						<li>Your builder interface should be marked with <code>@TargetClass</code> annotation.</li>
+						<li>
+							Supported only next builder interface methods:
+							<ul>
+								<li><code>build()</code>/<code>back()</code>. Please use methods
+									inherited from <code>RootBuilder</code>/<code>NestedBuilder</code>
+									interfaces only, do not declare your own. Use correct generic
+									types to get expected target type.</li>
+								<li><code>set*()</code>. Each set method should have the
+									same signature as method from the target type, otherwise you will
+									get errors in runtime. Setter methods should return current builder interface type.</li>
+								<li><code>add*()</code> method allows to add objects to the
+									target field of collection type. It shouldn't have any
+									arguments. Add methods should return type of interface
+									inherited from <code>NestedBuilder</code> interface.</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<div class="page-header">
+					<a name="limitations"></a>
+					<h1>Known issues and limitations</h1>
+				</div>
+				<div class="row clearfix">
+					<p>
+						<ul>
+							<li>Default constructor is required for the target type.</li>
+							<li><code>set*()</code>/<code>add*()</code> require appropriate accessor methods in the target type.</li>
+							<li><code>set*()</code> methods with primitive type arguments are not supported.</li>
+							<li><code>add*()</code> methods works only with collection-type fields. Arrays are not supported.</li>
+						</ul>
+					</p>
+				</div>
+			</div>
+			<div class="col-md-1 column"></div>
+		</div>
+	</div>
+
+</body>
+</html>
