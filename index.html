@@ -62,6 +62,7 @@
 							<li><a href="#examples">Examples</a></li>
 							<li><a href="#rules">Implementation rules</a></li>
 							<li><a href="#limitations">Known issues and limitations</a></li>
+							<li><a href="#news">News</a></li>
 						</ul>
 					</div>
 				</nav>
@@ -259,8 +260,18 @@ Product product = builder
 						<ul>
 							<li>Default constructor is required for the target type.</li>
 							<li><code>set*()</code>/<code>add*()</code> require appropriate accessor methods in the target type.</li>
-							<li><code>set*()</code> methods with primitive type arguments are not supported.</li>
 							<li><code>add*()</code> methods works only with collection-type fields. Arrays are not supported.</li>
+						</ul>
+					</p>
+				</div>
+				<div class="page-header">
+					<a name="news"></a>
+					<h1>News</h1>
+				</div>
+				<div class="row clearfix">
+					<p>
+						<ul>
+							<li>Since version <span class="badge">0.0.2</span> <code>set*()</code> methods supports primitive type arguments with automatic conversion between Model and Builder interfaces</li>
 						</ul>
 					</p>
 				</div>
