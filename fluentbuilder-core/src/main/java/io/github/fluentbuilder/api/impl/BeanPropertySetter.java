@@ -11,8 +11,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BeanPropertySetter implements PropertySetter {
+
+    private static final Map<Class<?>, Class<?>> OBJECT_TYPE_TO_PRIMITIVE;
+
+    static {
+        Map<Class<?>, Class<?>> m = new HashMap<Class<?>, Class<?>>();
+        m.put(Boolean.class, Boolean.TYPE);
+        m.put(Byte.class, Byte.TYPE);
+        m.put(Character.class, Character.TYPE);
+        m.put(Short.class, Short.TYPE);
+        m.put(Integer.class, Integer.TYPE);
+        m.put(Long.class, Long.TYPE);
+        m.put(Float.class, Float.TYPE);
+        m.put(Double.class, Double.TYPE);
+        OBJECT_TYPE_TO_PRIMITIVE = Collections.unmodifiableMap(m);
+    }
 
     public void setProperty(Method builderMethod, BuilderModel model, Object target, Object[] values) {
         Class<?> targetClass = model.getTargetClass();
@@ -122,8 +140,16 @@ public class BeanPropertySetter implements PropertySetter {
             Class<?> cl = cls[i];
             Class<?> cl2 = cls2[i];
             if (cl2 == null) {
+                // null argument passed to the builder implementation. type checking is not required
                 continue;
-            } else if (!cl2.isAssignableFrom(cl)) {
+            }
+
+            if (cl2.isAssignableFrom(cl)) {
+                continue;
+            }
+
+            Class<?> primitiveType = OBJECT_TYPE_TO_PRIMITIVE.get(cl2);
+            if (primitiveType == null || !primitiveType.isAssignableFrom(cl)) {
                 return false;
             }
         }
