@@ -121,6 +121,10 @@ public class BeanPropertySetter implements PropertySetter {
         return readMethod;
     }
 
+    /**
+     * @param cls array of Bean method arguments 
+     * @param cls2 array of Builder interface method arguments
+     */
     protected boolean isParametersCompatible(Class<?>[] cls, Class<?>[] cls2) {
         boolean clsEmpty = isEmptyArray(cls);
         boolean cls2Empty = isEmptyArray(cls2);
@@ -139,6 +143,7 @@ public class BeanPropertySetter implements PropertySetter {
         for (int i = 0; i < count; i++) {
             Class<?> cl = cls[i];
             Class<?> cl2 = cls2[i];
+
             if (cl2 == null) {
                 // null argument passed to the builder implementation. type checking is not required
                 continue;
@@ -148,10 +153,18 @@ public class BeanPropertySetter implements PropertySetter {
                 continue;
             }
 
-            Class<?> primitiveType = OBJECT_TYPE_TO_PRIMITIVE.get(cl2);
-            if (primitiveType == null || !primitiveType.isAssignableFrom(cl)) {
-                return false;
+            Class<?> cl2PrimitiveType = OBJECT_TYPE_TO_PRIMITIVE.get(cl2);
+            if (cl2PrimitiveType != null && cl2PrimitiveType.equals(cl)) {
+                continue;
             }
+
+            Class<?> clPrimitiveType = OBJECT_TYPE_TO_PRIMITIVE.get(cl);
+            if (clPrimitiveType != null && clPrimitiveType.equals(cl2)) {
+                continue;
+            }
+
+            // type doesn't match
+            return false;
         }
 
         return true;
