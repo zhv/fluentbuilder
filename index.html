@@ -71,9 +71,9 @@
 					<p>
 						FluentBuilder is a small Java library which implements
 						 <a href="https://en.wikipedia.org/wiki/Builder_pattern">builder</a>
-						design pattern. It uses developer configured interfaces and
-						reflection methods to analyze model (target) and provides
-						convenient API.
+						design pattern. It uses developer-configured interfaces and
+						reflection methods to analyze target model and provides
+						convenient builder API.
 					</p>
 					<a href="https://github.com/zhv/fluentbuilder"><img
 						style="position: absolute; top: 0; right: 0; border: 0;"
@@ -90,12 +90,12 @@
 					<div class="col-md-4 column">
 						<h3>
 							<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
-							<span>Dead simple</span>
+							<span>Simple</span>
 						</h3>
 						<p>
 							FluentBuilder designed as simple as possible. It requires
 							implementation of your model-specific interface only. Target
-							class (or model) may be represented as simple POJO. No
+							classes (or model) may be present as simple POJO. No
 							XML/JSON/etc configuration files required.
 						</p>
 					</div>
@@ -105,11 +105,11 @@
 							<span>Ready for extension</span>
 						</h3>
 						<p>
-							You have ability to use your own services. However you may
+							There is a possibility to use your own services. However you may
 							completely redefine builder process.
 						</p>
 						<p>
-							Extension points:
+							Please check at the following extension points if you like:
 							<ul>
 								<li><code>BuilderIntrospector</code></li>
 								<li><code>PropertySetter</code></li>
@@ -125,8 +125,8 @@
 						<p>
 							FluentBuilder is really small:
 							<ul>
-								<li>Only one JAR artifact (24 K size)</li>
-								<li>Only one dependency (SLF4J)</li>
+								<li>The only one JAR artifact (24K size)</li>
+								<li>The only one external dependency (SLF4J)</li>
 							</ul>
 						</p>
 					</div>
@@ -138,7 +138,7 @@
 				<div class="row clearfix">
 					<p class="well-sm bg-success">
 						<span class="badge">1</span>&nbsp;
-						<b>If you have some model class</b>
+						<b>Model class</b>
 					</p>
 					<div class="col-md-9 column">
 <pre class="code lang-java">
@@ -161,7 +161,7 @@ public class Product
 					</div>
 					<div class="col-md-3 column">
 						<ol>
-							<li>Create or use existing class.</li>
+							<li>You may create or use existing class.</li>
 							<li>Add get/set methods to turn your class into the POJO bean.</li>
 						</ol>
 					</div>
@@ -169,7 +169,7 @@ public class Product
 				<div class="row clearfix">
 					<p class="well-sm bg-success">
 						<span class="badge">2</span>&nbsp;
-						<b>Create builder interface</b>
+						<b>Builder interface</b>
 					</p>
 					<div class="col-md-8 column">
 <pre class="code lang-java">
@@ -185,23 +185,24 @@ public interface ProductBuilder&lt;R&gt;
 					</div>
 					<div class="col-md-4 column">
 						<ol>
-							<li>Create simple interface.</li>
-							<li>Add <code>@TargetClass</code> annotation to connect builder with its target type.</li>
-							<li>Extend it from the <code>NestedBuilder</code>. This marks your interface as
-								builder and also allows to use it as nested builder.</li>
-							<li>Copy setter methods from model class to the builder interface.
+							<li>Create interface as shown.</li>
+							<li>Add <code>@TargetClass</code> annotation to link builder with its target type.</li>
+							<li>Extend interface from the <code>NestedBuilder</code>. It is required to marks your
+								interface as builder and also allows to use <code>ProductBuilder</code> as part of
+								subsequent calls of builder methods.</li>
+							<li>Copy setter methods from model class into the builder interface.
 								Every setter method should have the same signature as used in
-								the target type, but it should return current builder interface type.</li>
+								the target type except the return type signature.</li>
 						</ol>
 						<hr />
-						<p>Note: Builder interface should be generic-enabled to avoid
-						unnecessary cast and use pre-compile time checking.</p>
+						<p>Note: The builder interface should be generic-enabled to avoid
+						unnecessary cast and use compile time checking.</p>
 					</div>
 				</div>
 				<div class="row clearfix">
 					<p class="well-sm bg-success">
 						<span class="badge">3</span>&nbsp;
-						<b>Get builder using BuilderFactoryFacade</b>
+						<b>BuilderFactoryFacade</b>
 					</p>
 					<div class="col-md-9 column">
 <pre class="code lang-java">
@@ -216,8 +217,8 @@ Product product = builder
 					</div>
 					<div class="col-md-3 column">
 						<ol>
-							<li>Create instance of <code>DefaultBuilderFactoryFacade</code>.</li>
-							<li>Create instance of <code>ProductBuilder</code>.</li>
+							<li>Create instance of the <code>DefaultBuilderFactoryFacade</code>.</li>
+							<li>Create instance of the <code>ProductBuilder</code>.</li>
 							<li>Build the target instance using fluent interface.</li>
 						</ol>
 					</div>
@@ -227,22 +228,22 @@ Product product = builder
 					<h1>Implementation rules</h1>
 				</div>
 				<div class="row clearfix">
-					<p>There is a set of rules for implementating builder interface:</p>
+					<p>There are a set of rules for implementing builder interface:</p>
 					<ul>
-						<li>It should extend the <code>RootBuilder</code> interface.
-							Inheritance is supported, you may use sub-interface like <code>NestedBuilder</code>.
+						<li>Builder interfaces should extend the <code>RootBuilder</code> interface.
+							Inheritance of builders are supported, you may use sub-interfaces like <code>NestedBuilder</code>.
 						</li>
 						<li>Your builder interface should be marked with <code>@TargetClass</code> annotation.</li>
 						<li>
-							Supported only next builder interface methods:
+							Only following interface methods are supported:
 							<ul>
 								<li><code>build()</code>/<code>back()</code>. Please use methods
 									inherited from <code>RootBuilder</code>/<code>NestedBuilder</code>
 									interfaces only, do not declare your own. Use correct generic
 									types to get expected target type.</li>
 								<li><code>set*()</code>. Each set method should have the
-									same signature as method from the target type, otherwise you will
-									get errors in runtime. Setter methods should return current builder interface type.</li>
+									same signature as method from the target type. Setter methods
+									should return current builder interface type.</li>
 								<li><code>add*()</code> method allows to add objects to the
 									target field of collection type. It shouldn't have any
 									arguments. Add methods should return type of interface
@@ -259,8 +260,8 @@ Product product = builder
 					<p>
 						<ul>
 							<li>Default constructor is required for the target type.</li>
-							<li><code>set*()</code>/<code>add*()</code> require appropriate accessor methods in the target type.</li>
-							<li><code>add*()</code> methods works only with collection-type fields. Arrays are not supported.</li>
+							<li><code>set*()</code>/<code>add*()</code> builder methods require appropriate methods in the target type.</li>
+							<li><code>add*()</code> methods work only with collection-type fields. Arrays are not supported.</li>
 						</ul>
 					</p>
 				</div>
@@ -271,7 +272,8 @@ Product product = builder
 				<div class="row clearfix">
 					<p>
 						<ul>
-							<li>Since version <span class="badge">0.0.2</span> <code>set*()</code> methods supports primitive type arguments with automatic conversion between Model and Builder interfaces</li>
+							<li>Since version <span class="badge">0.0.2</span> <code>set*()</code> methods support primitive
+								type arguments with automatic conversion of values between Model and Builder interfaces</li>
 						</ul>
 					</p>
 				</div>
